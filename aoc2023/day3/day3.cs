@@ -8,22 +8,6 @@ namespace aoc2023_02
 {
     internal partial class Program
     {
-
-
-        static string[] d3_data0 =
-        """
-        467..114..
-        ...*......
-        ..35..633.
-        ......#...
-        617*......
-        .....+.58.
-        ..592.....
-        ......755.
-        ...$.*....
-        .664.598..
-        """.Split("\r\n");
-
         static bool chkAround(int y, int x, string[] d)
         {
             for (int i = y - (y > 0 ? 1 : 0); i <= y + (y == d.Length - 1 ? 0 : 1); i++)
@@ -92,6 +76,20 @@ namespace aoc2023_02
 
             Console.WriteLine($"Answer2: {gear.Sum(x => x.numMin*x.numMax)}");
         }
+
+        static string[] d3_data0 =
+        """
+        467..114..
+        ...*......
+        ..35..633.
+        ......#...
+        617*......
+        .....+.58.
+        ..592.....
+        ......755.
+        ...$.*....
+        .664.598..
+        """.Split("\r\n");
 
 
     }
