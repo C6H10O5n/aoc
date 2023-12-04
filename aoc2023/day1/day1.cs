@@ -44,20 +44,20 @@ namespace aoc2023_02
         static Dictionary<string, int[]> nums = "one|1,two|2,three|3,four|4,five|5,six|6,seven|7,eight|8,nine|9".Split(",").ToDictionary(x => x.Split("|")[0], x => new int[] { int.Parse(x.Split("|")[1]), -1 });
 
         static string[] d1_data0 =
-            """
-            9cpjmdgf
-            1eightwom
-            bbm4twoeight8oneone3one
-            threenine3
-            1111
-            two1nine
-            eightwothree
-            abcone2threexyz
-            xtwone3four
-            4nineeightseven2
-            zoneight234
-            7pqrstsixteen
-            """.Split("\r\n");
+        """
+        9cpjmdgf
+        1eightwom
+        bbm4twoeight8oneone3one
+        threenine3
+        1111
+        two1nine
+        eightwothree
+        abcone2threexyz
+        xtwone3four
+        4nineeightseven2
+        zoneight234
+        7pqrstsixteen
+        """.Split("\r\n");
 
     }
 }
