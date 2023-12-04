@@ -21,6 +21,10 @@ namespace aoc2023_02
             day3();
 
 
+            Console.WriteLine($"\n\nDay 4 Problem:");
+            day4();
+
+
 
             Console.WriteLine("\n\n-------------------------\nDone.....\n\n\n\n");
 
