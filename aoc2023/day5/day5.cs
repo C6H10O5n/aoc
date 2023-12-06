@@ -15,7 +15,7 @@ namespace aoc2023_02
         class MapPart { 
             public MapPart(string s) 
             { 
-                var vals = GetSpaceDelimDigitsAsListInt(s);
+                var vals = GetSpaceDelimDigitsAsListLong(s);
                 destStart = vals[0];
                 srcStart = vals[1];
                 Range = vals[2];
@@ -38,9 +38,7 @@ namespace aoc2023_02
 
             public void ClearMap() => map.Clear();
         }
-
-        static List<long> GetSpaceDelimDigitsAsListInt(string l) => Regex.Replace(l, " {2,}", " ").Trim().Split(" ").Select(n => long.Parse(n)).ToList();
-        
+                
         static List<MapPart> GetMapParts(ref int i, string[] d)
         {
             var mx = new List<MapPart>();
@@ -59,7 +57,7 @@ namespace aoc2023_02
                 var l = d[i];
                 if (l.StartsWith("seeds: "))
                 {
-                    seed = GetSpaceDelimDigitsAsListInt(l.Split(":")[1]);
+                    seed = GetSpaceDelimDigitsAsListLong(l.Split(":")[1]);
                 }
                 else if (l.StartsWith("seed-to-soil map:"))
                 {
