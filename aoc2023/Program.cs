@@ -12,30 +12,37 @@ namespace aoc2023_02
             Console.WriteLine("Advent of Code 2023:.....");
 
 
-            Console.WriteLine($"\n\nDay 1 Problem:");
+            //Console.WriteLine($"\n\nDay 1 Problem:");
+            //timer.Start();
+            //day1();
+            //timer.Stop();
+            //Console.WriteLine($"Elapsed Time: {timer.Elapsed.TotalSeconds} seconds");
+
+
+            //Console.WriteLine($"\n\nDay 2 Problem:");
+            //timer.Start();
+            //day2();
+            //timer.Stop();
+            //Console.WriteLine($"Elapsed Time: {timer.Elapsed.TotalSeconds} seconds");
+
+
+            //Console.WriteLine($"\n\nDay 3 Problem:");
+            //timer.Start();
+            //day3();
+            //timer.Stop();
+            //Console.WriteLine($"Elapsed Time: {timer.Elapsed.TotalSeconds} seconds");
+
+
+            //Console.WriteLine($"\n\nDay 4 Problem:");
+            //timer.Start();
+            //day4();
+            //timer.Stop();
+            //Console.WriteLine($"Elapsed Time: {timer.Elapsed.TotalSeconds} seconds");
+
+
+            Console.WriteLine($"\n\nDay 5 Problem:");
             timer.Start();
-            day1();
-            timer.Stop();
-            Console.WriteLine($"Elapsed Time: {timer.Elapsed.TotalSeconds} seconds");
-
-
-            Console.WriteLine($"\n\nDay 2 Problem:");
-            timer.Start();
-            day2();
-            timer.Stop();
-            Console.WriteLine($"Elapsed Time: {timer.Elapsed.TotalSeconds} seconds");
-
-
-            Console.WriteLine($"\n\nDay 3 Problem:");
-            timer.Start();
-            day3();
-            timer.Stop();
-            Console.WriteLine($"Elapsed Time: {timer.Elapsed.TotalSeconds} seconds");
-
-
-            Console.WriteLine($"\n\nDay 4 Problem:");
-            timer.Start();
-            day4();
+            day5();
             timer.Stop();
             Console.WriteLine($"Elapsed Time: {timer.Elapsed.TotalSeconds} seconds");
 
