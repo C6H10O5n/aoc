@@ -464,7 +464,7 @@ namespace aoc2023_02
 
         static void day10()
         {
-            var map = new c10Map(d10_data);
+            var map = new c10Map(d10_data0a3b);
 
             //follow pipe
             var path = map.BuildPath();
@@ -479,7 +479,7 @@ namespace aoc2023_02
             
 
 
-            Console.WriteLine($"Answer2: Left={map.CellsLeftOfPath.Count}; Right={map.CellsRightOfPath.Count}"); // 262 > ans < 842 
+            Console.WriteLine($"Part2....: \n    -CellsLeftOfPath={map.CellsLeftOfPath.Count}\n    -CellsRightOfPath={map.CellsRightOfPath.Count}");
 
             var ipl = new List<c10Coord>();
             for (var i = 0; i < map.Count; i++)
@@ -505,7 +505,7 @@ namespace aoc2023_02
             }
 
 
-            Console.WriteLine($"Answer2b: Left span cells={ipl.Count}"); // 262 > ans < 842 (!289; !521)
+            Console.WriteLine($"\n    -Left span cells={ipl.Count}"); 
 
 
 
@@ -533,153 +533,14 @@ namespace aoc2023_02
             }
 
 
-            Console.WriteLine($"Answer2b: Right span cells={ipr.Count}"); // 262 > ans < 842 
-
-
-            /*
-            //static bool IsPointInPolygon(c10Coord point, List<c10Coord> polygon)
-            //{
-            //    var intersects = new List<double>();
-            //    var a = polygon.Last();
-            //    foreach (var b in polygon)
-            //    {
-            //        if (b.X == point.X && b.Y == point.Y)
-            //        {
-            //            return true;
-            //        }
-
-            //        if (b.X == a.X && point.X == a.X && point.X >= Math.Min(a.Y, b.Y) && point.Y <= Math.Max(a.Y, b.Y))
-            //        {
-            //            return true;
-            //        }
-
-            //        if (b.Y == a.Y && point.Y == a.Y && point.X >= Math.Min(a.X, b.X) && point.X <= Math.Max(a.X, b.X))
-            //        {
-            //            return true;
-            //        }
-
-            //        if ((b.Y < point.Y && a.Y >= point.Y) || (a.Y < point.Y && b.Y >= point.Y))
-            //        {
-            //            var px = (int)(b.X + 1.0 * (point.Y - b.Y) / (a.Y - b.Y) * (a.X - b.X));
-            //            intersects.Add(px);
-            //        }
-
-            //        a = b;
-            //    }
-
-            //    intersects.Sort();
-            //    return intersects.IndexOf(point.X) % 2 == 0 || intersects.Count(x => x < point.X) % 2 == 1;
-            //}
+            Console.WriteLine($"    -Right span cells={ipr.Count}"); 
 
 
 
-            ////find inside points
-            //var ip = new List<c10Coord>();
-            //var chopen = "F|L";
-            //var chclose = "7|J";
-            //for (var i = 0; i < map.Count; i++)
-            //{
-            //    bool pin = false;
-            //    bool ppin = false;
-            //    char[] ck = new char[map[i].Length];
-            //    var cks = "";
-            //    for (int j = 0; j < map[i].Length; j++)
-            //    {
-            //        var xc = path.Where(p => p.r == i && p.c == j).FirstOrDefault();
-            //        var xci = xc == null ? -1 : path.IndexOf(xc);
-            //        if (xc!=null)
-            //        {
-            //            //if(pin && chclose.Contains(map[i][j])) pin = !pin;
-            //            //else if(!pin && chopen.Contains(map[i][j])) pin= !pin;
-            //            //pin = !pin;
-            //            ck[j]='-';
+            Console.WriteLine($"\n    -LeftTotal={ipr.Count+ map.CellsLeftOfPath.Count}"); // 262 > ans < 842 (!289; !521)
+            Console.WriteLine($"    -RightTotal={ipr.Count + map.CellsRightOfPath.Count}"); // 262 > ans < 842 (!289; !521)
 
 
-            //            //var xc1 = path[xci == path.Count - 1 ? 1 : (xci + 1)];
-            //            //var xc2 = path[xci == 0 ? path.Count - 2 : (xci - 1)];
-            //            //var xcn = path.Where(p => p.r == i && p.c == j + 1).FirstOrDefault();
-            //            //while (
-            //            //       xcn != null 
-            //            //    && j < map[i].Length - 1 
-            //            //    && (xcn.Equals(xc1) || xcn.Equals(xc2))
-            //            //    && (xcn.s== '-'
-            //            //          || xc.s=='-'
-            //            //          || (xc.s == 'F' && xcn.s == 'J')
-            //            //          || (xc.s == 'L' && xcn.s == '7')
-            //            //       )  
-            //            //)
-            //            //{
-            //            //    j++;
-            //            //    ck[j] = '-';
-
-            //            //    xc = path.Where(p => p.r == i && p.c == j).FirstOrDefault();
-            //            //    xci = xc == null ? -1 : path.IndexOf(xc);
-            //            //    xc1 = path[xci == path.Count - 1 ? 1 : (xci + 1)];
-            //            //    xc2 = path[xci == 0 ? path.Count - 2 : (xci - 1)];
-            //            //    xcn = path.Where(p => p.r == i && p.c == j + 1).FirstOrDefault();
-
-            //            //    if(xc.s=='-' && (xcn.s=='J' || xcn.s == '7')) pin = false;
-            //            //}
-            //        }
-            //        else if(i==0 || i== map.Count - 1)
-            //        {
-            //            ck[j] = '0';
-            //        }
-            //        else if (j == 0 )
-            //        {
-            //            ck[j] = '0';
-            //            while (j<ck.Length-1 && !path.Where(p => p.r == i && p.c == j).Any()) { j++; ck[j] = '0'; }
-            //        }
-            //        else if (pin)
-            //        {
-            //            var pt = new c10Coord(i, j);
-            //            if (IsPointInPolygon(pt, path))
-            //            {
-            //                ck[j] = 'X';
-            //                if (j == ck.Length - 1)
-            //                {
-            //                    var k = ck.Length - 1;
-            //                    while (k>0 && ck[k] == 'X') { ck[k] = '0'; k--; }
-            //                    k = 0;
-            //                    while (k<ck.Length-1 && ck[k] == 'X') { ck[k] = '0'; k++; }
-            //                }
-            //            }
-            //            else
-            //            {
-            //                ck[j] = '0';
-            //            }
-            //        }
-            //        else
-            //        {
-            //            ck[j] = '0';
-
-            //            var pt = new c10Coord(i, j);
-            //            if (IsPointInPolygon(pt, path))
-            //            {
-            //                ck[j] = 'X';
-            //                if (j == ck.Length - 1)
-            //                {
-            //                    var k = ck.Length - 1;
-            //                    while (k > 0 && ck[k] == 'X') { ck[k] = '0'; k--; }
-            //                    k = 0;
-            //                    while (k < ck.Length - 1 && ck[k] == 'X') { ck[k] = '0'; k++; }
-            //                }
-            //            }
-            //            else
-            //            {
-            //                ck[j] = '0';
-            //            }
-            //        }
-            //    }
-            //    cks = new string(ck);
-            //    for (int j = 0; j < ck.Length; j++) if (ck[j] == 'X') ip.Add(new c10Coord(map[i][j], i, j));
-
-            //}
-
-
-
-            //Console.WriteLine($"Answer2: {ip.Count}");
-            */
 
         }
 
@@ -722,6 +583,13 @@ namespace aoc2023_02
         .||OOOOOOOOOO||.
         .||OOOOOOOOOO||.
         .|L----7F----J|.
+        .|IIIII||IIIII|.
+        .|IIIII||IIIII|.
+        .|IIIII||IIIII|.
+        .|IIIII||IIIII|.
+        .|IIIII||IIIII|.
+        .|IIIII||IIIII|.
+        .|IIIII||IIIII|.
         .|IIIII||IIIII|.
         .|IIIII||IIIII|.
         .|IIIII||IIIII|.
