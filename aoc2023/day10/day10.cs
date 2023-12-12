@@ -7,6 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.ExceptionServices;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml;
@@ -36,11 +37,21 @@ namespace aoc2023_02
                 this.r = ir;
                 this.c = ic;
             }
-            public c10Coord(int ir, int ic) : this(' ', ir, ic) { }
 
             public char s { get; set; }
             public int r { get; set; }
             public int c { get; set; }
+
+            public c10Map ParentMap { get; set; }
+
+
+            public int PathId { get; set; } = -1;
+            public bool IsOnPath => PathId >= 0;
+            public bool IsInsidePath { get; set; }
+            public bool IsRightOfPath { get; set; }
+            public bool IsLeftOfPath { get; set; }
+            public bool IsUnassigned => !IsLeftOfPath && !IsRightOfPath && !IsOnPath;
+
 
             public char directionOut { get; private set; } = '?';
             public void setDirectionOut(c10Coord toCoord)
@@ -78,53 +89,53 @@ namespace aoc2023_02
             public char directionIn { get; private set; }
             public List<c10Coord> GetCellsLeftOfDirection(int rCnt, int cCnt)
             {
-                var leftCells = new List<c10Coord>();
+                var dcells = new List<c10Coord>();
 
 
                 switch (s)
                 {
-                    case 'F':
+                    case 'F': //NW-SE
                         switch (directionIn)
                         {
                             case 'S':
-                                if (r > 0) leftCells.Add(new c10Coord(r - 1, c)); //N
-                                if (c > 0) leftCells.Add(new c10Coord(r, c - 1)); //W
-                                if (c > 0 && r > 0) leftCells.Add(new c10Coord(r - 1, c - 1)); //NW
+                                if (CellNorth != null) dcells.Add(CellNorth); //N
+                                if (CellWest != null) dcells.Add(CellWest); //W
+                                if (CellNW != null) dcells.Add(CellNW); //NW
                                 break;
                             case 'E':
-                                if (r < rCnt - 1) leftCells.Add(new c10Coord(r + 1, c)); //S
-                                if (c < cCnt - 1) leftCells.Add(new c10Coord(r, c + 1)); //E
-                                if (c < cCnt - 1 && r < rCnt - 1) leftCells.Add(new c10Coord(r + 1, c + 1)); //SE
+                                if (CellSouth != null) dcells.Add(CellSouth); //S
+                                if (CellEast != null) dcells.Add(CellEast); //E
+                                if (CellSE != null) dcells.Add(CellSE); //SE
                                 break;
                         }
                         break;
-                    case '7':
+                    case '7': //NE-SW
                         switch (directionIn)
                         {
                             case 'S':
-                                if (r < rCnt - 1) leftCells.Add(new c10Coord(r + 1, c)); //S
-                                if (c > 0) leftCells.Add(new c10Coord(r, c - 1)); //W
-                                if (c > 0 && r < rCnt - 1) leftCells.Add(new c10Coord(r + 1, c - 1)); //SW
+                                if (CellSouth != null) dcells.Add(CellSouth); //S
+                                if (CellWest != null) dcells.Add(CellWest); //W
+                                if (CellSW != null) dcells.Add(CellSW); //SW
                                 break;
                             case 'W':
-                                if (r > 0) leftCells.Add(new c10Coord(r - 1, c)); //N
-                                if (c < cCnt - 1) leftCells.Add(new c10Coord(r, c + 1)); //E
-                                if (c < cCnt - 1 && r > 0) leftCells.Add(new c10Coord(r - 1, c + 1)); //NE
+                                if (CellNorth != null) dcells.Add(CellNorth); //N
+                                if (CellEast != null) dcells.Add(CellEast); //E
+                                if (CellNE != null) dcells.Add(CellNE); //NE
                                 break;
                         }
                         break;
-                    case 'L': 
+                    case 'L': //
                         switch (directionIn)
                         {
                             case 'N':
-                                if (r > 0) leftCells.Add(new c10Coord(r - 1, c)); //N
-                                if (c < cCnt - 1) leftCells.Add(new c10Coord(r, c + 1)); //E
-                                if (c < cCnt - 1 && r > 0) leftCells.Add(new c10Coord(r - 1, c + 1)); //NE
+                                if (CellNorth != null) dcells.Add(CellNorth); //N
+                                if (CellEast != null) dcells.Add(CellEast); //E
+                                if (CellNE != null) dcells.Add(CellNE); //NE
                                 break;
-                            case 'W':
-                                if (r < rCnt - 1) leftCells.Add(new c10Coord(r + 1, c)); //S
-                                if (c < cCnt - 1) leftCells.Add(new c10Coord(r, c + 1)); //E
-                                if (c < cCnt - 1 && r < rCnt - 1) leftCells.Add(new c10Coord(r + 1, c + 1)); //SE
+                            case 'E':
+                                if (CellSouth != null) dcells.Add(CellSouth); //S
+                                if (CellWest != null) dcells.Add(CellWest); //W
+                                if (CellSW != null) dcells.Add(CellSW); //SW
                                 break;
                         }
                         break;
@@ -132,14 +143,14 @@ namespace aoc2023_02
                         switch (directionIn)
                         {
                             case 'N':
-                                if (r < rCnt - 1) leftCells.Add(new c10Coord(r + 1, c)); //S
-                                if (c > 0) leftCells.Add(new c10Coord(r, c - 1)); //W
-                                if (c > 0 && r < rCnt - 1) leftCells.Add(new c10Coord(r + 1, c - 1)); //SW
+                                if (CellSouth != null) dcells.Add(CellSouth); //S
+                                if (CellEast != null) dcells.Add(CellEast); //E
+                                if (CellSE != null) dcells.Add(CellSE); //SE
                                 break;
-                            case 'E':
-                                if (r > 0) leftCells.Add(new c10Coord(r - 1, c)); //N
-                                if (c > 0) leftCells.Add(new c10Coord(r, c - 1)); //W
-                                if (c > 0 && r > 0) leftCells.Add(new c10Coord(r - 1, c - 1)); //NW
+                            case 'W':
+                                if (CellNorth != null) dcells.Add(CellNorth); //N
+                                if (CellWest != null) dcells.Add(CellWest); //W
+                                if (CellNW != null) dcells.Add(CellNW); //NW
                                 break;
                         }
                         break;
@@ -147,10 +158,10 @@ namespace aoc2023_02
                         switch (directionIn)
                         {
                             case 'E':
-                                if (r < rCnt - 1) leftCells.Add(new c10Coord(r + 1, c)); //S
+                                if (CellSouth != null) dcells.Add(CellSouth); //S
                                 break;
                             case 'W':
-                                if (r > 0) leftCells.Add(new c10Coord(r - 1, c)); //N
+                                if (CellNorth != null) dcells.Add(CellNorth); //N
                                 break;
                         }
                         break;
@@ -158,85 +169,84 @@ namespace aoc2023_02
                         switch (directionIn)
                         {
                             case 'N':
-                                if (c < cCnt - 1) leftCells.Add(new c10Coord(r, c + 1)); //E
+                                if (CellEast != null) dcells.Add(CellEast); //E
                                 break;
                             case 'S':
-                                if (c > 0) leftCells.Add(new c10Coord(r, c - 1)); //W
+                                if (CellWest != null) dcells.Add(CellWest); //W
                                 break;
                         }
                         break;
                 }
 
 
-                
 
-                return leftCells;
+                return dcells;
             }
 
             public List<c10Coord> GetCellsRightOfDirection(int rCnt, int cCnt)
             {
-                var leftCells = new List<c10Coord>();
+                var dcells = new List<c10Coord>();
 
 
                 switch (s)
                 {
-                    case 'F':
+                    case 'F': //NW-SE
                         switch (directionIn)
                         {
                             case 'E':
-                                if (r > 0) leftCells.Add(new c10Coord(r - 1, c)); //N
-                                if (c > 0) leftCells.Add(new c10Coord(r, c - 1)); //W
-                                if (c > 0 && r > 0) leftCells.Add(new c10Coord(r - 1, c - 1)); //NW
+                                if (CellNorth != null) dcells.Add(CellNorth); //N
+                                if (CellWest != null) dcells.Add(CellWest); //W
+                                if (CellNW != null) dcells.Add(CellNW); //NW
                                 break;
                             case 'S':
-                                if (r < rCnt - 1) leftCells.Add(new c10Coord(r + 1, c)); //S
-                                if (c < cCnt - 1) leftCells.Add(new c10Coord(r, c + 1)); //E
-                                if (c < cCnt - 1 && r < rCnt - 1) leftCells.Add(new c10Coord(r + 1, c + 1)); //SE
+                                if (CellSouth != null) dcells.Add(CellSouth); //S
+                                if (CellEast != null) dcells.Add(CellEast); //E
+                                if (CellSE != null) dcells.Add(CellSE); //SE
                                 break;
                         }
                         break;
-                    case '7':
+                    case '7': //NE-SW
                         switch (directionIn)
                         {
                             case 'W':
-                                if (r < rCnt - 1) leftCells.Add(new c10Coord(r + 1, c)); //S
-                                if (c > 0) leftCells.Add(new c10Coord(r, c - 1)); //W
-                                if (c > 0 && r < rCnt - 1) leftCells.Add(new c10Coord(r + 1, c - 1)); //SW
+                                if (CellSouth != null) dcells.Add(CellSouth); //S
+                                if (CellWest != null) dcells.Add(CellWest); //W
+                                if (CellSW != null) dcells.Add(CellSW); //SW
                                 break;
                             case 'S':
-                                if (r > 0) leftCells.Add(new c10Coord(r - 1, c)); //N
-                                if (c < cCnt - 1) leftCells.Add(new c10Coord(r, c + 1)); //E
-                                if (c < cCnt - 1 && r > 0) leftCells.Add(new c10Coord(r - 1, c + 1)); //NE
+                                if (CellNorth != null) dcells.Add(CellNorth); //N
+                                if (CellEast != null) dcells.Add(CellEast); //E
+                                if (CellNE != null) dcells.Add(CellNE); //NE
                                 break;
                         }
                         break;
-                    case 'L':
+                    case 'L': //
                         switch (directionIn)
                         {
-                            case 'W':
-                                if (r > 0) leftCells.Add(new c10Coord(r - 1, c)); //N
-                                if (c < cCnt - 1) leftCells.Add(new c10Coord(r, c + 1)); //E
-                                if (c < cCnt - 1 && r > 0) leftCells.Add(new c10Coord(r - 1, c + 1)); //NE
+                            case 'E':
+                                if (CellNorth != null) dcells.Add(CellNorth); //N
+                                if (CellEast != null) dcells.Add(CellEast); //E
+                                if (CellNE != null) dcells.Add(CellNE); //NE
                                 break;
                             case 'N':
-                                if (r < rCnt - 1) leftCells.Add(new c10Coord(r + 1, c)); //S
-                                if (c < cCnt - 1) leftCells.Add(new c10Coord(r, c + 1)); //E
-                                if (c < cCnt - 1 && r < rCnt - 1) leftCells.Add(new c10Coord(r + 1, c + 1)); //SE
+                                if (CellSouth != null) dcells.Add(CellSouth); //S
+                                if (CellWest != null) dcells.Add(CellWest); //W
+                                if (CellSW != null) dcells.Add(CellSW); //SW
                                 break;
                         }
                         break;
                     case 'J':
                         switch (directionIn)
                         {
-                            case 'E':
-                                if (r < rCnt - 1) leftCells.Add(new c10Coord(r + 1, c)); //S
-                                if (c > 0) leftCells.Add(new c10Coord(r, c - 1)); //W
-                                if (c > 0 && r < rCnt - 1) leftCells.Add(new c10Coord(r + 1, c - 1)); //SW
+                            case 'W':
+                                if (CellSouth != null) dcells.Add(CellSouth); //S
+                                if (CellEast != null) dcells.Add(CellEast); //E
+                                if (CellSE != null) dcells.Add(CellSE); //SE
                                 break;
                             case 'N':
-                                if (r > 0) leftCells.Add(new c10Coord(r - 1, c)); //N
-                                if (c > 0) leftCells.Add(new c10Coord(r, c - 1)); //W
-                                if (c > 0 && r > 0) leftCells.Add(new c10Coord(r - 1, c - 1)); //NW
+                                if (CellNorth != null) dcells.Add(CellNorth); //N
+                                if (CellWest != null) dcells.Add(CellWest); //W
+                                if (CellNW != null) dcells.Add(CellNW); //NW
                                 break;
                         }
                         break;
@@ -244,10 +254,10 @@ namespace aoc2023_02
                         switch (directionIn)
                         {
                             case 'W':
-                                if (r < rCnt - 1) leftCells.Add(new c10Coord(r + 1, c)); //S
+                                if (CellSouth != null) dcells.Add(CellSouth); //S
                                 break;
                             case 'E':
-                                if (r > 0) leftCells.Add(new c10Coord(r - 1, c)); //N
+                                if (CellNorth != null) dcells.Add(CellNorth); //N
                                 break;
                         }
                         break;
@@ -255,10 +265,10 @@ namespace aoc2023_02
                         switch (directionIn)
                         {
                             case 'S':
-                                if (c < cCnt - 1) leftCells.Add(new c10Coord(r, c + 1)); //E
+                                if (CellEast != null) dcells.Add(CellEast); //E
                                 break;
                             case 'N':
-                                if (c > 0) leftCells.Add(new c10Coord(r, c - 1)); //W
+                                if (CellWest != null) dcells.Add(CellWest); //W
                                 break;
                         }
                         break;
@@ -267,21 +277,94 @@ namespace aoc2023_02
 
 
 
-                return leftCells;
+                return dcells;
             }
 
 
-            public double X => r + .05;
-            public double Y => c + .05;
+            c10Coord CellNorth => NeighborCellsBase[0];
+            c10Coord CellSouth => NeighborCellsBase[1];
+            c10Coord CellEast  => NeighborCellsBase[2];
+            c10Coord CellWest  => NeighborCellsBase[3];
+            c10Coord CellNE    => NeighborCellsBase[4];
+            c10Coord CellNW    => NeighborCellsBase[5];
+            c10Coord CellSE    => NeighborCellsBase[6];
+            c10Coord CellSW    => NeighborCellsBase[7];
+            public List<c10Coord> NeighborCells => NeighborCellsBase.Where((x,index) => x != null && index < 4).ToList();
+            public List<c10Coord> NeighborCellsBase
+            {
+                get
+                {
+                    {
+                        var nc = new List<c10Coord>();
+                        var rc = ParentMap.rowCnt - 1;
+                        var cc = ParentMap.colCnt - 1;
+                        if (r >  0) nc.Add(ParentMap[r - 1][c + 0]); else nc.Add(null);//N
+                        if (r < rc) nc.Add(ParentMap[r + 1][c + 0]); else nc.Add(null);//S
+                        if (c < cc) nc.Add(ParentMap[r + 0][c + 1]); else nc.Add(null);//E
+                        if (c >  0) nc.Add(ParentMap[r + 0][c - 1]); else nc.Add(null);//W
+
+
+                        if (r >  0 && c < cc) nc.Add(ParentMap[r - 1][c + 0]); else nc.Add(null);//NE
+                        if (r >  0 && c >  0) nc.Add(ParentMap[r - 1][c + 0]); else nc.Add(null);//NW
+                        if (r < rc && c < cc) nc.Add(ParentMap[r + 1][c + 0]); else nc.Add(null);//SE
+                        if (r < rc && c >  0) nc.Add(ParentMap[r + 1][c + 0]); else nc.Add(null);//SW
+
+                        return nc;
+                    }
+                }
+            }
+
+
+            public c10Coord MoveNext(c10Coord pc)
+            {
+                if (!isMoveCell) return null;
+                PathId = pc.PathId+1;
+
+                switch (s)
+                {
+                    case 'F': return pc == CellSouth ? CellEast: CellSouth;
+                    case 'L': return pc == CellNorth ? CellEast: CellNorth;
+                    case 'J': return pc == CellNorth ? CellWest: CellNorth;
+                    case '7': return pc == CellSouth ? CellWest: CellSouth;
+                    case '-': return pc == CellWest  ? CellEast: CellWest;
+                    case '|': return pc == CellNorth ? CellSouth: CellNorth;
+                    default: return null;
+                        //case 'S': return c > ic.c || r > ic.r;
+                }
+
+
+                //return NeighborCells.Where(c => c.isMoveCell && !c.IsOnPath).Where(c => this.isVaildMoveTo(c)).FirstOrDefault();
+
+            }
+            public c10Coord MoveNext(int idx)
+            {
+                if (!isMoveCell) return null;
+                PathId=idx;
+
+
+                return NeighborCells.Where(c => c.isMoveCell && !c.IsOnPath).Where(c=>this.isVaildMoveTo(c)).FirstOrDefault();
+
+            }
 
             public bool isMoveCell => mv.Keys.Contains(s);
             public List<c10Coord> MoveCells => isMoveCell ? mv[s] : null;
-            public bool isVaildMove(c10Coord ic)
+
+            public bool isVaildMoveTo(c10Coord ic)
             {
                 if (!isMoveCell) return false;
-                if (MoveCells.Any(mc => r + mc.r == ic.r && c + mc.c == ic.c)) return true;
+                switch (ic.s)
+                {
+                    case 'F': return c > ic.c || r > ic.r;
+                    case 'L': return c > ic.c || r < ic.r;
+                    case 'J': return c < ic.c || r < ic.r;
+                    case '7': return c < ic.c || r > ic.r;
+                    case '-': return c != ic.c || r == ic.r;
+                    case '|': return c == ic.c || r != ic.r;
+                  //case 'S': return c > ic.c || r > ic.r;
+                }
                 return false;
             }
+            
 
             public bool Equals(c10Coord ic)
             {
@@ -295,105 +378,52 @@ namespace aoc2023_02
         }
 
 
-        class c10Map : List<string>
+        class c10Map : List<List<c10Coord>>
         {
-            public c10Map(string[] ls) => this.AddRange(ls);
+            public c10Map(string[] ls)
+            {
+                for (int i = 0; i < ls.Count(); i++)
+                {
+                    var ca = ls[i].ToCharArray();
+                    var xc = new List<c10Coord>();
+                    for (int j = 0; j < ca.Length; j++)
+                    {
+                       xc.Add(new c10Coord(ca[j], i, j) { ParentMap = this});
+                    }
+                    this.Add(xc);
+                }
+            }
 
-            //helper methods
-            char getcv(c10Coord c) => this[c.r][c.c];
-            bool cInRng(c10Coord c) => c.r >= 0 && c.c >= 0 && c.r < this.Count && c.c < this.Last().Length;
+            public int colCnt => this[0].Count;
+            public int rowCnt => Count;
+            public int cellCnt => colCnt * rowCnt;
 
 
             //find start S
-            int GetStrartRow() => this.TakeWhile(x => !x.Contains('S')).Count();
-            int GetStrartCol() => this[GetStrartRow()].IndexOf('S');
-            public c10Coord GetStratCoord() => new c10Coord('S', GetStrartRow(), GetStrartCol());
-
-
-
-            //get neighbouring cell coordinates
-            public List<c10Coord> getCells(int r, int c) => new List<c10Coord> {
-                                           new c10Coord(r - 1, c + 0),
-                new c10Coord(r + 0, c - 1)                           ,new c10Coord(r + 0, c + 1),
-                                           new c10Coord(r + 1, c + 0)
-            }.Where(c => cInRng(c)).ToList();
-            public List<c10Coord> getCellsDiag(int r, int c) => new List<c10Coord> {
-                new c10Coord(r - 1, c - 1),new c10Coord(r - 1, c + 0),new c10Coord(r - 1, c + 1),
-                new c10Coord(r + 0, c - 1)                           ,new c10Coord(r + 0, c + 1),
-                new c10Coord(r + 1, c - 1),new c10Coord(r + 1, c + 0),new c10Coord(r + 1, c + 1)
-            }.Where(c => cInRng(c)).ToList();
-            public List<c10Coord> GetValidMoveCells(c10Coord ic) => getCells(ic.r, ic.c)
-              .Select(c => new c10Coord(getcv(c), c.r, c.c))
-             .Where(c => ic.isVaildMove(c) && c.isVaildMove(ic))
-             .ToList();
-
+            int StrartRow() => StratCoord.r;
+            int StrartCol() => StratCoord.c;
+            public c10Coord StratCoord => this.SelectMany(x => x).Where(c=>c.s=='S').FirstOrDefault();
 
 
             // search for path
-            public List<c10Coord> Path = null; 
-            public List<c10Coord> rSearchPath(c10Coord cc = null, c10Coord pc = null, List<c10Coord> path = null)
+            public List<c10Coord> Path = null;
+            public void BuildPath()
             {
-                if (cc != null && cc.s == 'S')
+                var cc = StratCoord;
+                var pc = cc;
+                cc = cc.MoveNext(0);
+                while (true)
                 {
-                    path.Add(cc);
-                    return path;
-                }
-                if (cc == null) cc = GetStratCoord();
-                if (pc == null) pc = cc;
-                if (path == null) path = new List<c10Coord>();
-                path.Add(cc);
-                var mvs = GetValidMoveCells(cc).Where(c => !c.Equals(pc)).ToList();
-
-                if (!mvs.Any())
-                {
-                    path.Remove(cc);
-                    return path;
-                }
-                else
-                {
-                    foreach (var cci in mvs)
-                    {
-                        var xp = rSearchPath(cci, cc, path);
-                        if (xp.Last().s == 'S')
-                        {
-                            return path;
-                        }
-                        else
-                        {
-                            path.Remove(cci);
-                        }
-                    };
-                }
-
-                return path;
-
-            }
-            public List<c10Coord> BuildPath()
-            {
-                var sc = GetStratCoord();
-                var path = new List<c10Coord>();
-                path.Add(sc);
-
-                var cc = sc;
-                var pc = sc;
-                var mvs = GetValidMoveCells(cc);
-                while (mvs.Any())
-                {
-                    cc = mvs.FirstOrDefault();
-                    path.Add(cc);
-
-                    if (cc.s == 'S') break;
-
-                    mvs = GetValidMoveCells(cc);
-                    mvs = mvs.Where(c => !c.Equals(pc)).ToList();
+                    var tc=cc.MoveNext(pc);
                     pc = cc;
+                    cc = tc;
+                    if (cc.s == 'S') break;
                 }
-
-                Path = path;
+                Path = this.SelectMany(x=>x).Where(x=>x.PathId>=0).OrderBy(x=>x.PathId).ToList();
                 AssignDirectionToPath();
                 BuildCellsLeftOfPath();
                 BuildCellsRightOfPath();
-                return path;
+                FillUnassignedCells();
 
             }
 
@@ -407,8 +437,9 @@ namespace aoc2023_02
                 {
                     Path[i].setDirectionOut(Path[i+1]);
                 }
-                Path.Last().setDirectionOut(Path[1]); //repeat of start cell
+                Path.Last().setDirectionOut(Path.First());
             }
+
 
             //Find cells Left of Path
             public List<c10Coord> CellsLeftOfPath = null;
@@ -416,22 +447,18 @@ namespace aoc2023_02
             {
                 if (Path == null || Path.Count < 2) return;
 
-                CellsLeftOfPath = new List<c10Coord>();
 
                 for (var i = 0; i < Path.Count - 1; i++)
                 {
-                    if (i == 80)
+                    foreach (var lc in Path[i].GetCellsLeftOfDirection(rowCnt, colCnt))
                     {
-                        i = i;
-                    }
-
-                    foreach (var lc in Path[i].GetCellsLeftOfDirection(Count, this[0].Length))
-                    {
-                        if(!Path.Any(p => p.r == lc.r && p.c == lc.c))
-                            if(!CellsLeftOfPath.Any(p => p.r == lc.r && p.c == lc.c))
-                                CellsLeftOfPath.Add(lc);
+                        if (!lc.IsOnPath && !lc.IsLeftOfPath)
+                        {
+                            lc.IsLeftOfPath = true;
+                        }
                     }
                 }
+                CellsLeftOfPath = this.SelectMany(x => x).Where(x => x.IsLeftOfPath).ToList();
             }
 
 
@@ -441,22 +468,54 @@ namespace aoc2023_02
             {
                 if (Path == null || Path.Count < 2) return;
 
-                CellsRightOfPath = new List<c10Coord>();
-
                 for (var i = 0; i < Path.Count - 1; i++)
                 {
-                    if (i == 80)
+                    foreach (var lc in Path[i].GetCellsRightOfDirection(rowCnt, colCnt))
                     {
-                        i = i;
-                    }
-
-                    foreach (var lc in Path[i].GetCellsRightOfDirection(Count, this[0].Length))
-                    {
-                        if (!Path.Any(p => p.r == lc.r && p.c == lc.c))
-                            if (!CellsRightOfPath.Any(p => p.r == lc.r && p.c == lc.c))
-                                CellsRightOfPath.Add(lc);
+                        if (!lc.IsOnPath && !lc.IsRightOfPath)
+                        {
+                            lc.IsRightOfPath = true;
+                        }
                     }
                 }
+                CellsRightOfPath = this.SelectMany(x => x).Where(x => x.IsRightOfPath).ToList();
+            }
+
+
+            //Fill Unassigned Cells
+            private void FillUnassignedCells()
+            {
+                if (Path == null || Path.Count < 2) return;
+                for (int r = 0; r < this.Count(); r++)
+                {
+                    for (int c = 0; c < this[0].Count(); c++)
+                    {
+                        var me = this[r][c];
+                        if (me.IsRightOfPath) {
+                            me.NeighborCells.ForEach(c => { if (c.IsUnassigned) c.IsRightOfPath = true; });
+                        }
+                        if (me.IsLeftOfPath)
+                        {
+                            me.NeighborCells.ForEach(c => { if (c.IsUnassigned) c.IsLeftOfPath = true; });
+                        }
+                    }
+                }
+                for (int r = this.Count() - 1; r >= 0; r--)
+                {
+                    for (int c = this[0].Count() - 1; c >= 0; c--)
+                    {
+                        var me = this[r][c];
+                        if (me.IsRightOfPath)
+                        {
+                            me.NeighborCells.ForEach(c => { if (c.IsUnassigned) c.IsRightOfPath = true; });
+                        }
+                        if (me.IsLeftOfPath)
+                        {
+                            me.NeighborCells.ForEach(c => { if (c.IsUnassigned) c.IsLeftOfPath = true; });
+                        }
+                    }
+                }
+
             }
 
         }
@@ -464,82 +523,35 @@ namespace aoc2023_02
 
         static void day10()
         {
-            var map = new c10Map(d10_data0a3b);
+            var map = new c10Map(d10_data);
 
             //follow pipe
-            var path = map.BuildPath();
+            map.BuildPath();
 
-            Console.WriteLine($"map size=: rows: {map.Count}: columns: {map[0].Length}: cells: {map.Count*map[0].Length}");
-            Console.WriteLine($"cells in path= {map.Path.Count - 1}");
-            Console.WriteLine($"cells in left/right adjacent to Path= {map.CellsLeftOfPath.Select(c=>$"[{c.r},{c.c}]").Union(map.CellsRightOfPath.Select(c => $"[{c.r},{c.c}]")).Distinct().Count()}");
+            Console.WriteLine($"map size=: rows: {map.rowCnt}: columns: {map.colCnt}: cells: {map.cellCnt}");
+            Console.WriteLine($"cells in path= {map.Path.Count}");
             Console.WriteLine($"\n\n");
 
 
-            Console.WriteLine($"Answer1: steps={path.Count - 1}: furthest(steps/2)={(path.Count - 1) / 2}");
-            
+            Console.WriteLine($"Answer1: steps={map.Path.Count}: furthest(steps/2)={map.Path.Count / 2}");
+
+            Console.WriteLine($"\n\nPart2....:");
+            Console.WriteLine($"    -CellsLeftOfPath: {map.CellsLeftOfPath.Count()}: After Fill: {map.SelectMany(x=>x).Count(x => x.IsLeftOfPath)}");
+            Console.WriteLine($"    -CellsRightOfPath: {map.CellsRightOfPath.Count()}: After Fill: {map.SelectMany(x => x).Count(x => x.IsRightOfPath)}");
 
 
-            Console.WriteLine($"Part2....: \n    -CellsLeftOfPath={map.CellsLeftOfPath.Count}\n    -CellsRightOfPath={map.CellsRightOfPath.Count}");
-
-            var ipl = new List<c10Coord>();
-            for (var i = 0; i < map.Count; i++)
+            //Print Map
+            Console.WriteLine($"\n\n");
+            foreach (var r in map) 
             {
-                char[] ck = new char[map[i].Length];
-                var cks = "";
-                for (int j = 0; j < ck.Length; j++)
-                {
-                    if(map.CellsLeftOfPath.Any(p => p.r == i && p.c == j))
-                    {
-                        while(j<ck.Length-1 
-                            && !map.Path.Any(p => p.r == i && p.c == j + 1)
-                            && !map.CellsLeftOfPath.Any(p => p.r == i && p.c == j + 1)
-                            && !map.CellsRightOfPath.Any(p => p.r == i && p.c == j + 1)
-                        )
-                        {
-                            j++;
-                            ipl.Add(new c10Coord(i, j));
-                        }
-                    }
-                }
-                cks = new string(ck);
+                foreach (var c in r)
+                    Console.Write(
+                          c.IsOnPath?c.s
+                        : c.IsLeftOfPath ? 'I'
+                        : c.IsRightOfPath ? 'O'
+                        : '.');
+                Console.Write("\n");
             }
-
-
-            Console.WriteLine($"\n    -Left span cells={ipl.Count}"); 
-
-
-
-             var ipr = new List<c10Coord>();
-            for (var i = 0; i < map.Count; i++)
-            {
-                char[] ck = new char[map[i].Length];
-                var cks = "";
-                for (int j = ck.Length -1; j >= 0 ; j--)
-                {
-                    if (map.CellsRightOfPath.Any(p => p.r == i && p.c == j))
-                    {
-                        while (j > 0
-                            && !map.Path.Any(p => p.r == i && p.c == j - 1)
-                            && !map.CellsLeftOfPath.Any(p => p.r == i && p.c == j - 1)
-                            && !map.CellsRightOfPath.Any(p => p.r == i && p.c == j - 1)
-                        )
-                        {
-                            j--;
-                            ipr.Add(new c10Coord(i, j));
-                        }
-                    }
-                }
-                cks = new string(ck);
-            }
-
-
-            Console.WriteLine($"    -Right span cells={ipr.Count}"); 
-
-
-
-            Console.WriteLine($"\n    -LeftTotal={ipr.Count+ map.CellsLeftOfPath.Count}"); // 262 > ans < 842 (!289; !521)
-            Console.WriteLine($"    -RightTotal={ipr.Count + map.CellsRightOfPath.Count}"); // 262 > ans < 842 (!289; !521)
-
 
 
         }
@@ -555,11 +567,11 @@ namespace aoc2023_02
 
         static string[] d10_data0a2 =
         """
-        -L|F7
-        7S-7|
-        L|7||
-        -L-J|
-        L|-JF
+        7-F7-
+        .FJ|7
+        SJLL7
+        |F--J
+        LJ.LJ
         """.Split("\r\n");
 
         static string[] d10_data0a3 =
@@ -584,14 +596,14 @@ namespace aoc2023_02
         .||OOOOOOOOOO||.
         .|L----7F----J|.
         .|IIIII||IIIII|.
-        .|IIIII||IIIII|.
-        .|IIIII||IIIII|.
-        .|IIIII||IIIII|.
-        .|IIIII||IIIII|.
-        .|IIIII||IIIII|.
-        .|IIIII||IIIII|.
-        .|IIIII||IIIII|.
-        .|IIIII||IIIII|.
+        .|IIIII||II777|.
+        .|IIIII||II777|.
+        .|IIIII||II777|.
+        .|IIIII||II777|.
+        .|IIIII||II777|.
+        .|IIIII||II777|.
+        .|IIIII||II777|.
+        .|IIIII||II777|.
         .|IIIII||IIIII|.
         .L-----JL-----J.
         ................
