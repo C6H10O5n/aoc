@@ -75,9 +75,16 @@ namespace aoc2023_02
             //Console.WriteLine($"Elapsed Time: {timer.Elapsed.TotalSeconds} seconds");
 
 
-            Console.WriteLine($"\n\nDay 10 Problem:");
+            //Console.WriteLine($"\n\nDay 10 Problem:");
+            //timer.Start();
+            //day10();
+            //timer.Stop();
+            //Console.WriteLine($"Elapsed Time: {timer.Elapsed.TotalSeconds} seconds");
+
+
+            Console.WriteLine($"\n\nDay 11 Problem:");
             timer.Start();
-            day10();
+            day11();
             timer.Stop();
             Console.WriteLine($"Elapsed Time: {timer.Elapsed.TotalSeconds} seconds");
 
