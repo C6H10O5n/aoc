@@ -188,7 +188,7 @@ namespace aoc2023_02
 
         }
 
-        class cllPair 
+        class c11Pair 
         { 
             public c11Coord g1 { get; set; } 
             public c11Coord g2 { get; set; } 
@@ -198,16 +198,6 @@ namespace aoc2023_02
         }
 
         
-
-        public static IEnumerable<IEnumerable<T>> GetPowerSet<T>(List<T> list)
-        {
-            return from m in Enumerable.Range(0, 1 << list.Count)
-                   select
-                       from i in Enumerable.Range(0, list.Count)
-                       where (m & (1 << i)) != 0
-                       select list[i];
-        }
-
         static void day11()
         {
             var map = new c11Map(d11_data);
@@ -220,7 +210,7 @@ namespace aoc2023_02
 
             var gal = map.Cells.Where(c=>c.GalId>0).ToList();
             //var galPairs = GetPowerSet<c11Coord>(gal).Where(l => l.Count() == 2).Select(x=>new cllPair() { g1 = x.ElementAt(0), g2 = x.ElementAt(1)}).ToList();
-            var galPairs = gal.DifferentCombinations(2).Select(x => new cllPair() { g1 = x.ElementAt(0), g2 = x.ElementAt(1) }).ToList();
+            var galPairs = gal.DifferentCombinations(2).Select(x => new c11Pair() { g1 = x.ElementAt(0), g2 = x.ElementAt(1) }).ToList();
             
 
 
