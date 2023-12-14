@@ -107,8 +107,9 @@ namespace aoc2023_02
                 }
                 return outs;
             }
-            public c12Rep(string s, bool part2On = false, bool exclCompleteDamage = false)
+            public c12Rep(string s, int index, bool part2On = false, bool exclCompleteDamage = false)
             {
+                id = index;
                 LineRaw = s;
                 var sl = s.Split(' ');
 
@@ -125,30 +126,38 @@ namespace aoc2023_02
                     string cs;
                     for (int i = 0; i < ichk.Count; i++)
                     {
-                        cs = new string('#', ichk[i]);
-
-                        //var regEx = new Regex($"\\.{cs}\\.");
-                        //if (regEx.IsMatch(LineAdj))
-                        //{
-                        //    LineAdj = regEx.Replace(LineAdj, ".", 1);
-                        //    chk.Remove(ichk[i]);
-                        //    continue;
-                        //}
-
-                        //regEx = new Regex($"^{cs}\\.");
-                        //if (regEx.IsMatch(LineAdj))
-                        //{
-                        //    LineAdj = regEx.Replace(LineAdj, ".", 1);
-                        //    chk.Remove(ichk[i]);
-                        //    continue;
-                        //}
-
-                        regEx = new Regex($"\\.{cs}$");
-                        if (regEx.IsMatch(LineAdj))
+                        if (ichk.Count(x=>x== ichk[i]) ==1)
                         {
-                            LineAdj = regEx.Replace(LineAdj, "..", 1);
-                            chk.Remove(ichk[i]);
-                            continue;
+                            cs = new string('#', ichk[i]);
+
+                            if (id == 693)
+                            {
+                                i = i;
+                            }
+
+                            regEx = new Regex($"\\.{cs}\\.");
+                            if (regEx.IsMatch(LineAdj) && regEx.Replace(LineAdj, ".", 1).Count(c=>c=='#')>0)
+                            {
+                                LineAdj = regEx.Replace(LineAdj, ".", 1);
+                                chk.Remove(ichk[i]);
+                                continue;
+                            }
+
+                            regEx = new Regex($"^{cs}\\.");
+                            if (regEx.IsMatch(LineAdj))
+                            {
+                                LineAdj = regEx.Replace(LineAdj, "", 1);
+                                chk.Remove(ichk[i]);
+                                continue;
+                            }
+
+                            regEx = new Regex($"\\.{cs}$");
+                            if (regEx.IsMatch(LineAdj))
+                            {
+                                LineAdj = regEx.Replace(LineAdj, "", 1);
+                                chk.Remove(ichk[i]);
+                                continue;
+                            }
                         }
                     }
                 }
@@ -178,6 +187,7 @@ namespace aoc2023_02
 
 
             }
+            public int id { get; set; }
             public string LineRaw { get; set; }
             public string LineOrig { get; private set; }
             public string LineAdj { get; private set; }
@@ -883,9 +893,9 @@ namespace aoc2023_02
             var d = d12_data;
 
 
-            var map = d.Select(d => new c12Rep(d,false,false)).ToList();
+            var map = d.Select((d,index) => new c12Rep(d,index,false,true)).ToList();
 
-            foreach (var dr in map)
+            foreach (var dr in map.OrderBy(x=>x.id))
             {
                 dr.getSolutions();
                 Console.WriteLine(dr);
@@ -895,9 +905,9 @@ namespace aoc2023_02
             
             
             
-            map = d.Select(d => new c12Rep(d,true,false)).ToList();
+            map = d.Select((d, index) => new c12Rep(d, index, true,true)).ToList();
 
-            foreach (var dr in map)
+            foreach (var dr in map.OrderBy(x => x.id))
             {
                 dr.getSolutions();
                 Console.WriteLine(dr);
