@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Windows;
 
 namespace aoc2023_02
 {
     internal partial class Program
     {
+        [STAThread]
         private static void Main(string[] args)
         {
             var timer = new Stopwatch();
@@ -91,7 +93,7 @@ namespace aoc2023_02
 
             Console.WriteLine($"\n\nDay 12 Problem:");
             timer.Start();
-            day12();
+            TextCopy.ClipboardService.SetText(day12());
             timer.Stop();
             Console.WriteLine($"Elapsed Time: {timer.Elapsed.TotalSeconds} seconds");
 
