@@ -98,12 +98,18 @@ namespace aoc2023_02
             //Console.WriteLine($"Elapsed Time: {timer.Elapsed.TotalSeconds} seconds");
 
 
-            Console.WriteLine($"\n\nDay 13 Problem:");
+            //Console.WriteLine($"\n\nDay 13 Problem:");
+            //timer.Start();
+            //day13();
+            //timer.Stop();
+            //Console.WriteLine($"Elapsed Time: {timer.Elapsed.TotalSeconds} seconds");
+
+
+            Console.WriteLine($"\n\nDay 14 Problem:");
             timer.Start();
-            day13();
+            day14();
             timer.Stop();
             Console.WriteLine($"Elapsed Time: {timer.Elapsed.TotalSeconds} seconds");
-
 
 
             Console.WriteLine("\n\n-------------------------\nDone.....\n\n\n\n");
