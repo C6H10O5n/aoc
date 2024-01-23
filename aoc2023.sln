@@ -5,6 +5,8 @@ VisualStudioVersion = 17.7.34221.43
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "aoc2023", "aoc2023\aoc2023.csproj", "{9986DAF9-A4FA-4692-B485-A962F0D05406}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "silvKeyTest", "silvKeyTest\silvKeyTest.csproj", "{8B5C67EB-C564-497D-9EC8-6A73DCA49680}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{9986DAF9-A4FA-4692-B485-A962F0D05406}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9986DAF9-A4FA-4692-B485-A962F0D05406}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9986DAF9-A4FA-4692-B485-A962F0D05406}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8B5C67EB-C564-497D-9EC8-6A73DCA49680}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8B5C67EB-C564-497D-9EC8-6A73DCA49680}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8B5C67EB-C564-497D-9EC8-6A73DCA49680}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8B5C67EB-C564-497D-9EC8-6A73DCA49680}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
