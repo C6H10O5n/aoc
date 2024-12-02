@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "aoc2023", "aoc2023\aoc2023.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "silvKeyTest", "silvKeyTest\silvKeyTest.csproj", "{8B5C67EB-C564-497D-9EC8-6A73DCA49680}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "aoc2024", "aoc2024\aoc2024.csproj", "{7B53B902-03FC-4540-9493-8CC4CB9E3362}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{8B5C67EB-C564-497D-9EC8-6A73DCA49680}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8B5C67EB-C564-497D-9EC8-6A73DCA49680}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8B5C67EB-C564-497D-9EC8-6A73DCA49680}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7B53B902-03FC-4540-9493-8CC4CB9E3362}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B53B902-03FC-4540-9493-8CC4CB9E3362}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B53B902-03FC-4540-9493-8CC4CB9E3362}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B53B902-03FC-4540-9493-8CC4CB9E3362}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
