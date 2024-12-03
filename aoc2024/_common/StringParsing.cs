@@ -17,5 +17,7 @@ namespace aoc2024
         static List<int> GetSpaceDelimDigitsAsListInt(string l) => GetSpaceDelimDigitsAsListString(l).Select(n => int.Parse(n)).ToList();
         static List<long> GetSpaceDelimDigitsAsListLong(string l) => GetSpaceDelimDigitsAsListString(l).Select(n => long.Parse(n)).ToList();
 
+        static List<int> GetCommaDelimDigitsAsListInt(string l) => l.Trim().Split(",").Select(n => int.Parse(n)).ToList();
+
     }
 }
