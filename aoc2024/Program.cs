@@ -23,9 +23,15 @@ internal partial class Program
         //timer.Stop();
         //Console.WriteLine($"Elapsed Time: {timer.Elapsed.TotalSeconds} seconds");
 
-        Console.WriteLine($"\n\nDay 3 Problem:");
+        //Console.WriteLine($"\n\nDay 3 Problem:");
+        //timer.Start();
+        //day3();
+        //timer.Stop();
+        //Console.WriteLine($"Elapsed Time: {timer.Elapsed.TotalSeconds} seconds");
+
+        Console.WriteLine($"\n\nDay 4 Problem:");
         timer.Start();
-        day3();
+        day4();
         timer.Stop();
         Console.WriteLine($"Elapsed Time: {timer.Elapsed.TotalSeconds} seconds");
 
