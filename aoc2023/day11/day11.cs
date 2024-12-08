@@ -47,22 +47,209 @@ namespace aoc2023_02
 
 
 
-            public double CalcDistToGalaxyBlock(c11Coord ic, double expFact = -1)
+
+
+            class c6Coord
             {
-                int cMax, cMin, rMax, rMin;
-                if (ic.c >= c) { cMax = ic.c; cMin = c; } else { cMax = c; cMin = ic.c; };
-                if (ic.r >= r) { rMax = ic.r; rMin = r; } else { rMax = r; rMin = ic.r; };
+                public c6Coord(char isc, int ir, int ic)
+                {
+                    this.s = isc;
+                    this.r = ir;
+                    this.c = ic;
 
-                var rowExFact = ParentMap.Cells.Where(x=>x.c>cMin && x.c<cMax && x.r==r && x.IsRowExpansion).Count();
-                var colExFact = ParentMap.Cells.Where(x => x.r > rMin && x.r < rMax && x.c == c && x.IsColExpansion).Count();
+                    if (IsGuard)
+                        origionalGuardDir = isc;
+                }
 
-                var exf = expFact > 1 ? (expFact - 2) : 0;
 
-                return (cMax - cMin) + (rMax - rMin) + (colExFact+rowExFact) * exf;
+                public char s { get; set; }
+                public int r { get; set; }
+                public int c { get; set; }
+
+                public readonly char origionalGuardDir;
+                public bool IsOrigionalGuardCell => "^v<>".Any(x => x == origionalGuardDir);
+
+                public string WasVisitedDirection = "";
+                public bool WasVisited => WasVisitedDirection != "";
+                public bool IsRepeatedMove;
+
+                public c6Map ParentMap { get; set; }
+
+                public bool IsGuard => "^v<>".Any(x => x == s);
+                public bool IsObstacle => s == '#' || s == 'X';
+
+                public void Reset()
+                {
+                    if (IsOrigionalGuardCell)
+                        s = origionalGuardDir;
+                    else
+                        s = '.';
+
+                    WasVisitedDirection = "";
+                    IsRepeatedMove = false;
+
+                }
+
+                void rotateGuardDirectionClockWise()
+                {
+                    if (IsGuard)
+                    {
+                        s = s == '^' ? '>'
+                          : s == '>' ? 'v'
+                          : s == 'v' ? '<'
+                          : s == '<' ? '^'
+                          : s;
+                    }
+                }
+
+                public c6Coord GuardNextMoveCell()
+                {
+                    if (!IsGuard) return null;
+
+                    WasVisitedDirection += s;
+
+                    var mc = s == '^' ? CellNorth
+                            : s == 'v' ? CellSouth
+                            : s == '>' ? CellEast
+                            : s == '<' ? CellWest
+                            : null;
+                    if (mc == null)
+                    {
+                        return null;
+                    }
+                    else if (mc.IsObstacle)
+                    {
+                        rotateGuardDirectionClockWise();
+                        return this;
+                    }
+                    else
+                    {
+                        mc.s = this.s;
+                        if (!mc.WasVisitedDirection.Any(x => x == mc.s))
+                            mc.WasVisitedDirection += mc.s;
+                        else
+                            mc.IsRepeatedMove = true;
+
+                        this.s = '.';
+
+                        return mc;
+                    }
+
+                }
+
+
+                c6Coord CellNorth => NeighborCellsBase[0];
+                c6Coord CellSouth => NeighborCellsBase[1];
+                c6Coord CellEast => NeighborCellsBase[2];
+                c6Coord CellWest => NeighborCellsBase[3];
+                c6Coord CellNE => NeighborCellsBase[4];
+                c6Coord CellNW => NeighborCellsBase[5];
+                c6Coord CellSE => NeighborCellsBase[6];
+                c6Coord CellSW => NeighborCellsBase[7];
+                public List<c6Coord> NeighborCells => NeighborCellsBase.Where((x, index) => x != null && index < 4).ToList();
+                public List<c6Coord> NeighborCellsBase
+                {
+                    get
+                    {
+                        {
+                            var nc = new List<c6Coord>();
+                            var rc = ParentMap.rowCnt - 1;
+                            var cc = ParentMap.colCnt - 1;
+                            if (r > 0) nc.Add(ParentMap[r - 1][c + 0]); else nc.Add(null);//N
+                            if (r < rc) nc.Add(ParentMap[r + 1][c + 0]); else nc.Add(null);//S
+                            if (c < cc) nc.Add(ParentMap[r + 0][c + 1]); else nc.Add(null);//E
+                            if (c > 0) nc.Add(ParentMap[r + 0][c - 1]); else nc.Add(null);//W
+
+
+                            if (r > 0 && c < cc) nc.Add(ParentMap[r - 1][c + 0]); else nc.Add(null);//NE
+                            if (r > 0 && c > 0) nc.Add(ParentMap[r - 1][c + 0]); else nc.Add(null);//NW
+                            if (r < rc && c < cc) nc.Add(ParentMap[r + 1][c + 0]); else nc.Add(null);//SE
+                            if (r < rc && c > 0) nc.Add(ParentMap[r + 1][c + 0]); else nc.Add(null);//SW
+
+                            return nc;
+                        }
+                    }
+                }
+
+                public bool Equals(c6Coord ic)
+                {
+                    if (ic is null) return false;
+                    if (r == ic.r && c == ic.c && s == ic.s && WasVisitedDirection == ic.WasVisitedDirection) return true;
+                    return false;
+                }
+
+                public override string ToString() => $"{s}[{r},{c}]";
+
             }
-            public double CalcDistToGalaxyEculid(c11Coord ic)
+
+
+            class c6Map : List<List<c6Coord>>
             {
-                return Math.Sqrt((ic.c - c) ^ 2 + (ic.r - r) ^ 2) / Math.Sqrt(2.0);
+                public c6Map(string[] ls)
+                {
+                    for (int i = 0; i < ls.Count(); i++)
+                    {
+                        var ca = ls[i].ToCharArray();
+                        var xcl = new List<c6Coord>();
+                        for (int j = 0; j < ca.Length; j++)
+                        {
+                            xcl.Add(new c6Coord(ca[j], i, j) { ParentMap = this });
+                        }
+                        this.Add(xcl);
+                    }
+
+                }
+
+                public int colCnt => this[0].Count;
+                public int rowCnt => Count;
+                public int cellCnt => colCnt * rowCnt;
+
+
+                public void Reset()
+                {
+                    foreach (var cell in Cells.Where(c => c.WasVisited))
+                    {
+                        cell.Reset();
+                    }
+                }
+
+                public int MoveGaurdTillOffMap()
+                {
+                    //PrintMap();
+                    var mg = GuardPos.GuardNextMoveCell();
+                    while (mg != null && !mg.IsRepeatedMove)
+                    {
+                        mg = mg.GuardNextMoveCell();
+                        //PrintMap();
+                    }
+
+                    if (mg != null && mg.IsRepeatedMove)
+                        return -9;
+                    else
+                        return Cells.Count(c => c.WasVisited);
+                }
+
+                c6Coord GuardPos => Cells.Where(x => x.IsGuard).FirstOrDefault();
+                c6Coord GuardPosOrigional => Cells.Where(x => x.IsOrigionalGuardCell).FirstOrDefault();
+
+
+                public IEnumerable<c6Coord> Cells => this.SelectMany(x => x);
+
+                public void PrintMap()
+                {
+                    Console.WriteLine($"\n\n");
+                    foreach (var r in this)
+                    {
+                        foreach (var c in r)
+                            Console.Write(
+                              c.IsOrigionalGuardCell ? '@'
+                            : c.WasVisited ? 'O'
+                            : c.s);
+                        Console.Write("\n");
+                    }
+                    Console.WriteLine($"\n\n");
+                }
+
             }
 
 
