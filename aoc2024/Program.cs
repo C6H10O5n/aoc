@@ -59,11 +59,107 @@ internal partial class Program
         //timer.Stop();
         //Console.WriteLine($"Elapsed Time: {timer.Elapsed.TotalSeconds} seconds");
 
-        Console.WriteLine($"\n\nDay 9 Problem:");
+        //Console.WriteLine($"\n\nDay 9 Problem:");
+        //timer.Start();
+        //day9();
+        //timer.Stop();
+        //Console.WriteLine($"Elapsed Time: {timer.Elapsed.TotalSeconds} seconds");
+
+        Console.WriteLine($"\n\nDay 10 Problem:");
         timer.Start();
-        day9();
+        day10();
         timer.Stop();
         Console.WriteLine($"Elapsed Time: {timer.Elapsed.TotalSeconds} seconds");
+
+        //Console.WriteLine($"\n\nDay 11 Problem:");
+        //timer.Start();
+        //day11();
+        //timer.Stop();
+        //Console.WriteLine($"Elapsed Time: {timer.Elapsed.TotalSeconds} seconds");
+
+        //Console.WriteLine($"\n\nDay 12 Problem:");
+        //timer.Start();
+        //day12();
+        //timer.Stop();
+        //Console.WriteLine($"Elapsed Time: {timer.Elapsed.TotalSeconds} seconds");
+
+        //Console.WriteLine($"\n\nDay 13 Problem:");
+        //timer.Start();
+        //day13();
+        //timer.Stop();
+        //Console.WriteLine($"Elapsed Time: {timer.Elapsed.TotalSeconds} seconds");
+
+        //Console.WriteLine($"\n\nDay 14 Problem:");
+        //timer.Start();
+        //day14();
+        //timer.Stop();
+        //Console.WriteLine($"Elapsed Time: {timer.Elapsed.TotalSeconds} seconds");
+
+        //Console.WriteLine($"\n\nDay 15 Problem:");
+        //timer.Start();
+        //day15();
+        //timer.Stop();
+        //Console.WriteLine($"Elapsed Time: {timer.Elapsed.TotalSeconds} seconds");
+
+        //Console.WriteLine($"\n\nDay 16 Problem:");
+        //timer.Start();
+        //day16();
+        //timer.Stop();
+        //Console.WriteLine($"Elapsed Time: {timer.Elapsed.TotalSeconds} seconds");
+
+        //Console.WriteLine($"\n\nDay 17 Problem:");
+        //timer.Start();
+        //day17();
+        //timer.Stop();
+        //Console.WriteLine($"Elapsed Time: {timer.Elapsed.TotalSeconds} seconds");
+
+        //Console.WriteLine($"\n\nDay 18 Problem:");
+        //timer.Start();
+        //day18();
+        //timer.Stop();
+        //Console.WriteLine($"Elapsed Time: {timer.Elapsed.TotalSeconds} seconds");
+
+        //Console.WriteLine($"\n\nDay 19 Problem:");
+        //timer.Start();
+        //day19();
+        //timer.Stop();
+        //Console.WriteLine($"Elapsed Time: {timer.Elapsed.TotalSeconds} seconds");
+
+        //Console.WriteLine($"\n\nDay 20 Problem:");
+        //timer.Start();
+        //day20();
+        //timer.Stop();
+        //Console.WriteLine($"Elapsed Time: {timer.Elapsed.TotalSeconds} seconds");
+
+        //Console.WriteLine($"\n\nDay 21 Problem:");
+        //timer.Start();
+        //day21();
+        //timer.Stop();
+        //Console.WriteLine($"Elapsed Time: {timer.Elapsed.TotalSeconds} seconds");
+
+        //Console.WriteLine($"\n\nDay 22 Problem:");
+        //timer.Start();
+        //day22();
+        //timer.Stop();
+        //Console.WriteLine($"Elapsed Time: {timer.Elapsed.TotalSeconds} seconds");
+
+        //Console.WriteLine($"\n\nDay 23 Problem:");
+        //timer.Start();
+        //day23();
+        //timer.Stop();
+        //Console.WriteLine($"Elapsed Time: {timer.Elapsed.TotalSeconds} seconds");
+
+        //Console.WriteLine($"\n\nDay 24 Problem:");
+        //timer.Start();
+        //day24();
+        //timer.Stop();
+        //Console.WriteLine($"Elapsed Time: {timer.Elapsed.TotalSeconds} seconds");
+
+        //Console.WriteLine($"\n\nDay 25 Problem:");
+        //timer.Start();
+        //day25();
+        //timer.Stop();
+        //Console.WriteLine($"Elapsed Time: {timer.Elapsed.TotalSeconds} seconds");
 
         Console.WriteLine("\n\n-------------------------\nDone.....\n\n\n\n");
         Console.ReadLine();
