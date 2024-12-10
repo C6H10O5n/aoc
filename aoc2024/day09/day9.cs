@@ -57,7 +57,6 @@ namespace aoc2024
 
         static long day9LogicPart2()
         {
-            //8564936405055 to high  --needed to reclaim space from moved numbers: added decrement to line 81 [fxs[i] += fxd[i];]
             //6368144863485 to high -- need to stop searching foward: added [ && j<i] in line 82 if statement
             //6362722604045
 
@@ -88,7 +87,6 @@ namespace aoc2024
                             rx[i][k] = -2;
                         }
                         fxs[j] -= fxd[i];
-                        fxs[i] += fxd[i];
                         break;
                     }
                 }
