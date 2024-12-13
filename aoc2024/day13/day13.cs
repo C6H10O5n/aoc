@@ -33,7 +33,7 @@ namespace aoc2024
 
         class d13Machine
         {
-            public d13Machine(string input, long prizeMultiplier = 1) 
+            public d13Machine(string input, long prizeOffset = 0) 
             {
                 foreach(string s in input.Split(Environment.NewLine))
                 {
@@ -53,7 +53,7 @@ namespace aoc2024
                     }
                     else if (s.StartsWith("Prize"))
                     {
-                        PrizeLocation = new d13Button() { X = sd[0] * prizeMultiplier, Y = sd[1] * prizeMultiplier };
+                        PrizeLocation = new d13Button() { X = prizeOffset+sd[0], Y = prizeOffset+sd[1] };
                     }
                 }
             }
@@ -128,8 +128,8 @@ namespace aoc2024
         static long day13LogicPart2()
         {
 
-            //26735 too low
-            var mrd = d13_data0.Select(x => new d13Machine(x, 10000000000000)).ToList();
+            //268000000000000 too high
+            var mrd = d13_data.Select(x => new d13Machine(x, 100000000)).ToList();
 
 
             var sol = new List<(long x1, long x2)>();
