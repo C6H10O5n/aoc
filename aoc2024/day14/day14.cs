@@ -310,23 +310,30 @@ namespace aoc2024
                     g.Move();
                 }
 
-                var rc = map.BuildRegions();
-                if (rc < minrc)
+                if (i > 7000)
                 {
-                    minrc = rc;
-                    map.PrintMap();
-                    Console.WriteLine("");
+                    var rc = map.BuildRegions();
+                    if (rc < minrc)
+                    {
+                        minrc = rc;
+                        map.PrintMap();
+                        Console.WriteLine("");
+                    }
+                    else
+                    {
+                        Console.Write($"\x1b[100D{(i == 0 ? Environment.NewLine : "")}{i}: {minrc}");
+                    }
+
+                    if (rc < 300)
+                    {
+                        map.PrintMap();
+                        ans = i + 1;
+                        break;
+                    }
                 }
                 else
                 {
-                    Console.Write($"\x1b[100D{(i == 0 ? Environment.NewLine : "")}{i}: {minrc}");
-                }
-                                
-
-                if (rc < 300)
-                {
-                    map.PrintMap();
-                    ans = i + 1;
+                    Console.Write($"\x1b[100D{(i == 0 ? Environment.NewLine : "")}{i}");
                 }
             }
 
