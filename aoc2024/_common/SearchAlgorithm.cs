@@ -24,7 +24,34 @@ namespace aoc2024
               elements.SelectMany((e, i) =>
                 elements.DifferentPermutations(k - 1).Select(p => (new[] { e }).Concat(p)));
         }
+
+        public static IEnumerable<long> RangeOfLong(long start, long count)
+        {
+            var limit = start + count;
+
+            while (start < limit)
+            {
+                yield return start;
+                start++;
+            }
+        }
+
     }
+
+    public static class EnumerableUtils
+    {
+        public static IEnumerable<long> RangeOfLong(long start, long count)
+        {
+            var limit = start + count;
+
+            while (start < limit)
+            {
+                yield return start;
+                start++;
+            }
+        }
+    }
+
 
     internal partial class Program
     {

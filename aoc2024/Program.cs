@@ -83,17 +83,17 @@ internal partial class Program
         //timer.Stop();
         //Console.WriteLine($"Elapsed Time: {timer.Elapsed.TotalSeconds} seconds");
 
-        Console.WriteLine($"\n\nDay 13 Problem:");
-        timer.Start();
-        day13();
-        timer.Stop();
-        Console.WriteLine($"Elapsed Time: {timer.Elapsed.TotalSeconds} seconds");
-
-        //Console.WriteLine($"\n\nDay 14 Problem:");
+        //Console.WriteLine($"\n\nDay 13 Problem:");
         //timer.Start();
-        //day14();
+        //day13();
         //timer.Stop();
         //Console.WriteLine($"Elapsed Time: {timer.Elapsed.TotalSeconds} seconds");
+
+        Console.WriteLine($"\n\nDay 14 Problem:");
+        timer.Start();
+        day14();
+        timer.Stop();
+        Console.WriteLine($"Elapsed Time: {timer.Elapsed.TotalSeconds} seconds");
 
         //Console.WriteLine($"\n\nDay 15 Problem:");
         //timer.Start();

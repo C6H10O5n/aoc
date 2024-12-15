@@ -18,12 +18,6 @@ namespace aoc2024
     internal partial class Program
     {
 
-        static void day13()
-        {           
-            Console.WriteLine($"Answer1: {day13LogicPart1()}");
-            Console.WriteLine($"Answer2: {day13LogicPart2()}");
-        }
-
         class d13Button
         {
             public long Y { get; set; }
@@ -68,13 +62,13 @@ namespace aoc2024
                 var av = isX ? A.X : A.Y;
                 var bv = isX ? B.X : B.Y;
 
-                var xx1 = CreateRange(0, pv / av).ToList()
+                var xx1 = EnumerableUtils.RangeOfLong(0, pv / av).ToList()
                     .Where(an => (pv - an * av) % bv == 0)
                     .Select(an => (an, (pv - an * av) / bv) )
                     .Where(x => x.Item1 * av + x.Item2 * bv == pv)
                     .ToList();
 
-                var xx2 = CreateRange(0, pv / bv).ToList()
+                var xx2 = EnumerableUtils.RangeOfLong(0, pv / bv).ToList()
                     .Where(bn => (pv - bn * bv) % av == 0)
                     .Select(bn => ((pv - bn * bv) / av, bn))
                     .Where(x => x.Item1 * av + x.Item2 * bv == pv)
@@ -83,20 +77,32 @@ namespace aoc2024
                 return xx1.Union(xx2).Distinct().ToList();
             }
 
+            public long CalcPrize()
+            {
+                //(py/by-(px*ay/(by*ax)))/(1-((bx*ay)/(by*ax)))
+                var P = PrizeLocation;
+                //var bCnt = (P.Y / B.Y - (P.X * A.Y / (B.Y * A.X))) / (1 - (B.X * A.Y / (B.Y * A.X)));
+                //var aCnt = (P.X - bCnt * B.X) / A.X;
+
+                var bCnt = (long)Math.Round(((double)P.Y / (double)B.Y - ((double)P.X * (double)A.Y / ((double)B.Y * (double)A.X))) / (1 - ((double)B.X * (double)A.Y / ((double)B.Y * (double)A.X))));
+                var aCnt = (long)Math.Round(((double)P.X - bCnt * (double)B.X) / (double)A.X);
+
+                if (aCnt * A.X + bCnt * B.X == P.X && aCnt * A.Y + bCnt * B.Y == P.Y)
+                    return aCnt * 3 + bCnt;
+                else
+                    return 0;
+            }
 
             public override string ToString() => $"A:{A} B:{B} Prize{PrizeLocation}";
 
         }
 
-        static IEnumerable<long> CreateRange(long start, long count)
-        {
-            var limit = start + count;
 
-            while (start < limit)
-            {
-                yield return start;
-                start++;
-            }
+
+        static void day13()
+        {
+            Console.WriteLine($"Answer1: {day13LogicPart1()}");
+            Console.WriteLine($"Answer2: {day13LogicPart2()}");
         }
 
         static long day13LogicPart1()
@@ -129,28 +135,9 @@ namespace aoc2024
         {
 
             //268000000000000 too high
-            var mrd = d13_data.Select(x => new d13Machine(x, 100000000)).ToList();
+            var mrd = d13_data.Select(x => new d13Machine(x, 10000000000000)).ToList();
 
-
-            var sol = new List<(long x1, long x2)>();
-
-            foreach (var mch in mrd)
-            {
-
-                var xx = mch.GetWinPaths(true);
-                var yy = mch.GetWinPaths(false);
-
-                var ss = xx.Intersect(yy).ToList();
-
-                if (ss != null && ss.Count > 1)
-                {
-                    var dd = 1;
-                }
-
-                if (ss != null) sol.AddRange(ss);
-            }
-
-            return sol.Sum(x => x.x1 * 3 + x.x2 * 1);
+            return mrd.Sum(x=>x.CalcPrize());
         }
 
         static string[] d13_data0 =
