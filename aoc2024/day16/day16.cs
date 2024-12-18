@@ -19,13 +19,13 @@ namespace aoc2024
             public c16State(c16Coord cell,char? pathInDirection)
             {
                 Cell = cell;
-                Dir = pathInDirection;
+                DirIn = pathInDirection;
             }
 
             public c16Coord Cell{ get; set; }
             public List<c16State> PStates { get; set; } = new List<c16State>();
-            public char? Dir { get; set; } = null;
-            public int Cost { get; set; } = int.MaxValue; // Calculated Cost from start to current node
+            public char? DirIn { get; set; } = null;
+            public int PthCost { get; set; } = int.MaxValue; // Calculated Cost from start to current node
             public bool IsInBestPath { get; set; }
         }
         class c16Coord
@@ -155,28 +155,38 @@ namespace aoc2024
 
 
             //Find Least Cost Path: A Star Method
-            public List<c16State>? PathStates { get; set; }
-            public List<c16State>? BuildPath(int turnCost)
+            void _extractStatesInPath (c16State st)
             {
-                var stl = new List<c16State>();
+                st.IsInBestPath = true;
+                st.PStates.ForEach(_extractStatesInPath);
+            }
+            public List<c16State>? PathStates { get; set; }
+            public List<c16State>? BuildPath(int turnCost, bool findAll)
+            {
+                var startState = new c16State(StartCell, '>') { PthCost = 0 };
+                var stl = new List<c16State>() { startState};
+                var ol = stl.ToList();
                 PathStates = stl;
-                var ol = new List<c16State>();
-                foreach (var cell in Cells.Where(x => !x.IsWall))
+                foreach (var cell in Cells.Where(x => x!=StartCell && !x.IsWall))
                 {
-                    foreach (var nc in "^v<>")
+                    foreach (var nc in cell.NeighborCells.Where(x=>!x.IsWall))
                     {
-                        var st = new c16State(cell, nc);
+                        var st = new c16State(cell, nc.GetPathDirectionTo(cell));
                         ol.Add(st);
                         stl.Add(st);
                     }
                 }
 
-                ol.Where(x => x.Cell == StartCell && x.Dir == '>').FirstOrDefault().Cost = 0;
                 while (ol.Count > 0)
                 {
                     // Get the node with the lowest cost
-                    var cur = ol.OrderBy(x => x.Cost).FirstOrDefault();
+                    var cur = ol.OrderBy(x => x.PthCost).FirstOrDefault();
                     ol.Remove(cur);
+
+                    if (!findAll && cur.Cell == EndCell)
+                    {
+                        break;
+                    }
 
                     if(cur.Cell.r==7 && cur.Cell.c == 5)
                     {
@@ -186,18 +196,18 @@ namespace aoc2024
                     // Explore neighbors
                     foreach (var neighbor in cur.Cell.NeighborCells.Where(c => !c.IsWall))
                     {
-                        var st = stl.FirstOrDefault(x => x.Cell == neighbor && x.Dir == cur.Cell.GetPathDirectionTo(neighbor));
+                        var st = stl.FirstOrDefault(x => x.Cell == neighbor && x.DirIn == cur.Cell.GetPathDirectionTo(neighbor));
                         if (st == null || !ol.Contains(st)) continue;
 
-                        var tmpTurnCost = st.Dir == cur.Dir ? 0 : turnCost;
+                        var tmpTurnCost = st.DirIn == cur.DirIn ? 0 : turnCost;
 
-                        var tmpPathCost = cur.Cost + 1 + tmpTurnCost;
+                        var tmpPathCost = cur.PthCost + 1 + tmpTurnCost;
 
 
-                        if (tmpPathCost <= st.Cost)
+                        if (tmpPathCost <= st.PthCost)
                         {
-                            st.Cost = tmpPathCost;
-                            if (tmpPathCost < st.Cost)
+                            st.PthCost = tmpPathCost;
+                            if (tmpPathCost < st.PthCost)
                                 st.PStates.Clear();
                             st.PStates.Add(cur);
                         }
@@ -205,12 +215,7 @@ namespace aoc2024
                     }
                 }
 
-                void walkPath(c16State st)
-                {
-                    st.IsInBestPath = true;
-                    st.PStates.ForEach(walkPath);
-                }
-                walkPath(PathStates.Where(x => x.Cell == EndCell).MinBy(x => x.Cost));
+               _extractStatesInPath(PathStates.Where(x => x.Cell == EndCell).MinBy(x => x.PthCost));
 
                 return PathStates; // No path found
             }
@@ -238,7 +243,7 @@ namespace aoc2024
 
         static void day16()
         {           
-            //Console.WriteLine($"Answer1: {day16LogicPart1()}");
+            Console.WriteLine($"Answer1: {day16LogicPart1()}");
             Console.WriteLine($"Answer2: {day16LogicPart2()}");
         }
                 
@@ -249,11 +254,11 @@ namespace aoc2024
 
             map.PrintMap();
                         
-            var path = map.BuildPath(1000);
+            var path = map.BuildPath(1000, false);
 
             map.PrintMap();
 
-            return map.PathStates.Where(x=>x.Cell==map.EndCell).Min(x=>x.Cost);
+            return map.PathStates.Where(x=>x.Cell==map.EndCell).Min(x=>x.PthCost);
         }
 
         static long day16LogicPart2()
@@ -263,7 +268,7 @@ namespace aoc2024
 
             map.PrintMap();
 
-            var path = map.BuildPath(1000);
+            var path = map.BuildPath(1000, true);
 
             map.PrintMap();
 
