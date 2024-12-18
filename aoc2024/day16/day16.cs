@@ -20,12 +20,16 @@ namespace aoc2024
             {
                 Cell = cell;
                 DirIn = pathInDirection;
+                EstCost = Math.Abs(cell.r-cell.ParentMap.EndCell.r)+ Math.Abs(cell.c - cell.ParentMap.EndCell.c);
+                PthCost = int.MaxValue - EstCost * 2;
             }
 
             public c16Coord Cell{ get; set; }
             public List<c16State> PStates { get; set; } = new List<c16State>();
             public char? DirIn { get; set; } = null;
-            public int PthCost { get; set; } = int.MaxValue; // Calculated Cost from start to current node
+            public int PthCost { get; set; } // Calculated Cost from start to current node
+            public int EstCost { get; set; } //estimated cost from current cell to end
+            public int TotCost => PthCost + EstCost;
             public bool IsInBestPath { get; set; }
         }
         class c16Coord
@@ -164,40 +168,36 @@ namespace aoc2024
             public List<c16State>? BuildPath(int turnCost, bool findAll)
             {
                 var startState = new c16State(StartCell, '>') { PthCost = 0 };
-                var stl = new List<c16State>() { startState};
-                var ol = stl.ToList();
-                PathStates = stl;
+                PathStates = new List<c16State>() { startState};
                 foreach (var cell in Cells.Where(x => x!=StartCell && !x.IsWall))
                 {
                     foreach (var nc in cell.NeighborCells.Where(x=>!x.IsWall))
                     {
-                        var st = new c16State(cell, nc.GetPathDirectionTo(cell));
-                        ol.Add(st);
-                        stl.Add(st);
+                        PathStates.Add(new c16State(cell, nc.GetPathDirectionTo(cell)));
                     }
                 }
+                var ol = PathStates.ToList();
 
+                var i = 0;
                 while (ol.Count > 0)
                 {
-                    // Get the node with the lowest cost
-                    var cur = ol.OrderBy(x => x.PthCost).FirstOrDefault();
+                    i++;
+
+                    // Get the node with the lowest cost (use a* if looking for single path)
+                    var cur = ol.OrderBy(x => findAll ? x.PthCost : x.TotCost).FirstOrDefault();
                     ol.Remove(cur);
 
+                    //Break if looking for single best path
                     if (!findAll && cur.Cell == EndCell)
-                    {
                         break;
-                    }
-
-                    if(cur.Cell.r==7 && cur.Cell.c == 5)
-                    {
-                        cur = cur;
-                    }
 
                     // Explore neighbors
                     foreach (var neighbor in cur.Cell.NeighborCells.Where(c => !c.IsWall))
                     {
-                        var st = stl.FirstOrDefault(x => x.Cell == neighbor && x.DirIn == cur.Cell.GetPathDirectionTo(neighbor));
-                        if (st == null || !ol.Contains(st)) continue;
+                        var st = PathStates.FirstOrDefault(x => x.Cell == neighbor && x.DirIn == cur.Cell.GetPathDirectionTo(neighbor));
+                        
+                        if (st == null || !ol.Contains(st)) 
+                            continue;
 
                         var tmpTurnCost = st.DirIn == cur.DirIn ? 0 : turnCost;
 
@@ -216,8 +216,9 @@ namespace aoc2024
                 }
 
                _extractStatesInPath(PathStates.Where(x => x.Cell == EndCell).MinBy(x => x.PthCost));
+                //Console.WriteLine($"  -> solver iderations: {i}");
 
-                return PathStates; // No path found
+                return PathStates; 
             }
 
             public void PrintMap()
@@ -256,7 +257,7 @@ namespace aoc2024
                         
             var path = map.BuildPath(1000, false);
 
-            map.PrintMap();
+            //map.PrintMap();
 
             return map.PathStates.Where(x=>x.Cell==map.EndCell).Min(x=>x.PthCost);
         }
@@ -270,10 +271,7 @@ namespace aoc2024
 
             var path = map.BuildPath(1000, true);
 
-            map.PrintMap();
-
-            
-
+            //map.PrintMap();
 
             return map.PathStates.Where(x => x.IsInBestPath).DistinctBy(x=>x.Cell).Count();
         }
