@@ -24,6 +24,37 @@ namespace aoc2024
               elements.SelectMany((e, i) =>
                 elements.DifferentPermutations(k - 1).Select(p => (new[] { e }).Concat(p)));
         }
+        public static IEnumerable<IEnumerable<T>> Permute<T>(this IEnumerable<T> sequence)
+        {
+            if (sequence == null)
+            {
+                yield break;
+            }
+
+            var list = sequence.ToList();
+
+            if (!list.Any())
+            {
+                yield return Enumerable.Empty<T>();
+            }
+            else
+            {
+                var startingElementIndex = 0;
+
+                foreach (var startingElement in list)
+                {
+                    var index = startingElementIndex;
+                    var remainingItems = list.Where((e, i) => i != index);
+
+                    foreach (var permutationOfRemainder in remainingItems.Permute())
+                    {
+                        yield return permutationOfRemainder.Prepend(startingElement);
+                    }
+
+                    startingElementIndex++;
+                }
+            }
+        }
 
         public static IEnumerable<long> RangeOfLong(long start, long count)
         {
