@@ -5,7 +5,11 @@ namespace aoc2024
     {
         static string[] d21_data =
         """
-        
+        341A
+        480A
+        286A
+        579A
+        149A
         """.Split(Environment.NewLine);
     }
 }
